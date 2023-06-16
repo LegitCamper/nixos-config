@@ -1,19 +1,15 @@
-{ config
-, pkgs
-, lib
-, ...
-}: {
+{ config, pkgs, lib, ...}: {
   imports = [
     ./modules/v4l2loopback.nix
   ];
   # Allow opening a shell during boot.
   # systemd.additionalUpstreamSystemUnits = ["debug-shell.service"];
 
-  time.timeZone = "Europe/Amsterdam";
+  time.timeZone = "America/Denver";
 
   suites.single-user.enable = true;
-  suites.i3.enable = true;
   suites.sway.enable = false;
+
 
   boot.initrd.systemd.enable = true;
 
@@ -85,28 +81,17 @@
     };
   };
 
-  fonts = {
-    fontDir.enable = true;
-    fontconfig = {
-      enable = true;
-      defaultFonts = {
-        monospace = [
-          "SauceCodePro Nerd Font"
-        ];
-      };
-    };
-    fonts = with pkgs; [
-      (nerdfonts.override { fonts = [ "SourceCodePro" ]; })
-      corefonts # Microsoft free fonts
-      noto-fonts
-    ];
-  };
+  fonts.fonts = with pkgs; [
+    (nerdfonts.override { fonts = [ "JetBrainsMono" "noto-fonts" ]; })
+  ];
 
   environment.systemPackages = with pkgs; [
     bash
+    fish
+    helix
     moreutils # sponge...
     unzip
-    vim
+    git
     wget
     htop
     efibootmgr
@@ -124,7 +109,7 @@
   ];
 
   # Use experimental nsncd. See https://flokli.de/posts/2022-11-18-nsncd/
-  services.nscd.enableNsncd = true;
+  # services.nscd.enableNsncd = true;
 
   services.acpid.enable = true;
   security.polkit.enable = true;
@@ -179,7 +164,7 @@
     publish.enable = false;
   };
 
-  services.redshift.enable = true;
+  services.redshift.enable = false;
   location.provider = "geoclue2";
 
   # Enable the X11 windowing system.
@@ -218,11 +203,6 @@
     };
   };
 
-  # Fingerprint reader
-  # services.fprintd.enable = true;
-  # security.pam.services.login.fprintAuth = true;
-  # security.pam.services.xscreensaver.fprintAuth = true;
-
   i18n.inputMethod = {
     enabled = "ibus";
     ibus.engines = with pkgs.ibus-engines; [ uniemoji ];
@@ -230,10 +210,8 @@
 
   programs.fish.enable = true;
   programs.bash.enableCompletion = true;
-  programs.tmux.enable = true;
   programs.adb.enable = true;
-
-  services.redis.servers."".enable = true;
+  programs.hyprland.enable = true;
 
   # virtualisation.virtualbox.host.enable = true;
   virtualisation.docker = {
@@ -253,11 +231,10 @@
   # This adds a lot of build time to the system.
   specialisation = {
     wayland.configuration = {
-      suites.i3.enable = pkgs.lib.mkForce false;
-      suites.sway.enable = pkgs.lib.mkForce true;
+      suites.sway.enable = pkgs.lib.mkForce false;
+      suites.hyprland.enable = pkgs.lib.mkForce false;
     };
     i3.configuration = {
-      suites.i3.enable = pkgs.lib.mkForce true;
       suites.sway.enable = pkgs.lib.mkForce false;
     };
   };
@@ -286,8 +263,8 @@
   };
 
   system.autoUpgrade = {
-    enable = false;
-    flake = "/home/bob.vanderlinden/projects/bobvanderlinden/nixos-config";
+    enable = true;
+    flake = "/home/sawyer/projects/nixos-config";
     flags = [ "--update-input" "nixpkgs" "--commit-lock-file" ];
     dates = "17:30";
   };

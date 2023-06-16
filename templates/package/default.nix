@@ -40,7 +40,7 @@ stdenv.mkDerivation rec {
   meta = with lib; {
     homepage = "https://";
     description = "";
-    maintainers = with maintainers; [ bobvanderlinden ];
+    maintainers = with maintainers; [ sawyer ];
 
     # license = licenses.mit;
     # license = licenses.gpl3;

@@ -8,15 +8,11 @@
     };
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     flake-utils.url = "github:numtide/flake-utils";
-    nixpkgs-ruby = {
-      url = "github:bobvanderlinden/nixpkgs-ruby";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
-    };
   };
 
   outputs = { self, nixpkgs, home-manager, flake-utils, nixpkgs-stable, ... } @ inputs:
     let
-      username = "bob.vanderlinden";
+      username = "sawyer";
       mkPkgs =
         { system ? "x86_64-linux"
         , nixpkgs ? inputs.nixpkgs
@@ -64,7 +60,6 @@
       templates = import ./templates;
     }
     # Define outputs that allow multiple systems with for all default systems.
-    # This is to support OSX and RPI.
     // flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = mkPkgs {
@@ -72,12 +67,6 @@
         };
       in
       {
-        packages =
-          let
-            lib = nixpkgs.lib;
-          in
-          lib.filterAttrs (name: package: (package ? meta) -> (package.meta ? platforms) -> builtins.elem system package.meta.platforms) (import ./packages { inherit pkgs; });
-
         devShells =
           (
             import ./dev-shells {
