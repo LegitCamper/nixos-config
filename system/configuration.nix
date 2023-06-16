@@ -95,6 +95,7 @@
     wget
     htop
     efibootmgr
+    ansible
 
     # Networking tools
     inetutils # hostname ping ifconfig...
